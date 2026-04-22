@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Waiter Rating · Must rate after purchase</title>
+  <title>MGT Entrepreneurship · Venture Feedback Simulator</title>
   <style>
     * {
       margin: 0;
@@ -13,7 +13,7 @@
     }
 
     body {
-      background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+      background: linear-gradient(145deg, #f0f4f8 0%, #e6edf4 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -23,9 +23,9 @@
 
     /* main card container */
     .app-container {
-      max-width: 680px;
+      max-width: 720px;
       width: 100%;
-      background: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.96);
       backdrop-filter: blur(1px);
       border-radius: 2.5rem;
       box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.02);
@@ -35,36 +35,40 @@
 
     /* header & product section */
     .product-panel {
-      background: #1e2a3e;
+      background: #0b2b26;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,215,130,0.08) 2%, transparent 2.5%);
+      background-size: 28px 28px;
       color: white;
       padding: 2rem 2rem 1.8rem;
       text-align: center;
     }
 
     .product-panel h1 {
-      font-size: 1.8rem;
-      font-weight: 600;
+      font-size: 1.9rem;
+      font-weight: 700;
       letter-spacing: -0.3px;
       margin-bottom: 0.5rem;
     }
 
     .product-panel .sub {
-      opacity: 0.75;
-      font-size: 0.95rem;
+      opacity: 0.8;
+      font-size: 0.9rem;
       margin-bottom: 1.4rem;
+      font-weight: 400;
     }
 
     .product-card {
-      background: #0f172ad9;
+      background: #0f2e28e0;
       backdrop-filter: blur(4px);
       border-radius: 2rem;
-      padding: 1rem 1.2rem;
+      padding: 1rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1rem;
       margin-top: 0.75rem;
+      border: 1px solid rgba(255,215,130,0.3);
     }
 
     .product-info {
@@ -72,37 +76,38 @@
     }
 
     .product-name {
-      font-weight: 700;
-      font-size: 1.25rem;
+      font-weight: 800;
+      font-size: 1.3rem;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
     .product-price {
-      font-size: 1rem;
-      opacity: 0.9;
-      margin-top: 4px;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-top: 5px;
+      font-family: monospace;
     }
 
     .buy-btn {
-      background: #facc15;
+      background: #f5b042;
       border: none;
-      color: #1e293b;
+      color: #0b2b26;
       font-weight: 700;
       font-size: 1rem;
-      padding: 0.7rem 1.6rem;
+      padding: 0.7rem 1.8rem;
       border-radius: 3rem;
       cursor: pointer;
       transition: 0.2s;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .buy-btn:hover {
-      background: #ffdd44;
+      background: #ffc55a;
       transform: scale(1.02);
       box-shadow: 0 8px 18px rgba(0,0,0,0.15);
     }
@@ -114,8 +119,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -132,12 +137,12 @@
 
     .rating-modal {
       background: white;
-      max-width: 480px;
+      max-width: 500px;
       width: 90%;
       border-radius: 2rem;
       padding: 2rem 1.8rem 2rem;
       text-align: center;
-      box-shadow: 0 40px 70px rgba(0,0,0,0.3);
+      box-shadow: 0 40px 70px rgba(0,0,0,0.35);
       animation: fadeSlideUp 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
@@ -153,14 +158,14 @@
     }
 
     .rating-modal h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #0f172a;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #0b2b26;
       margin-bottom: 0.25rem;
     }
 
     .rating-modal p {
-      color: #334155;
+      color: #2c4a3e;
       margin-bottom: 1.5rem;
       font-size: 0.95rem;
     }
@@ -187,12 +192,12 @@
 
     .star.selected {
       color: #f5b042;
-      text-shadow: 0 0 3px #ffb347;
+      text-shadow: 0 0 3px #f0a020;
     }
 
     .star:hover {
       transform: scale(1.12);
-      color: #facc15;
+      color: #f5b042;
     }
 
     /* reason textarea */
@@ -201,7 +206,7 @@
       padding: 0.9rem 1rem;
       font-size: 0.95rem;
       border-radius: 1.5rem;
-      border: 1.5px solid #e2e8f0;
+      border: 1.5px solid #d0dfd9;
       background: #fefefe;
       font-family: inherit;
       resize: vertical;
@@ -210,13 +215,13 @@
     }
 
     .reason-field:focus {
-      border-color: #facc15;
+      border-color: #f5b042;
       outline: none;
-      box-shadow: 0 0 0 3px rgba(250,204,21,0.2);
+      box-shadow: 0 0 0 3px rgba(245,176,66,0.25);
     }
 
     .submit-rating-btn {
-      background: #0f172a;
+      background: #0b2b26;
       color: white;
       font-weight: 700;
       font-size: 1rem;
@@ -230,29 +235,29 @@
     }
 
     .submit-rating-btn:hover {
-      background: #1e293b;
+      background: #1a403a;
       transform: translateY(-2px);
     }
 
     .close-attempt {
       margin-top: 1rem;
       font-size: 0.7rem;
-      color: #94a3b8;
+      color: #7e9a8f;
       background: none;
       border: none;
       cursor: default;
       pointer-events: none;
     }
 
-    /* success toast / message */
+    /* toast message */
     .toast-message {
       position: fixed;
       bottom: 28px;
       left: 50%;
       transform: translateX(-50%) scale(0.9);
-      background: #1e2a3e;
-      color: white;
-      padding: 12px 24px;
+      background: #0b2b26;
+      color: #fef7e0;
+      padding: 12px 26px;
       border-radius: 60px;
       font-weight: 500;
       box-shadow: 0 10px 20px rgba(0,0,0,0.2);
@@ -262,6 +267,7 @@
       z-index: 1100;
       white-space: nowrap;
       backdrop-filter: blur(4px);
+      font-size: 0.9rem;
     }
 
     .toast-message.show {
@@ -269,38 +275,39 @@
       transform: translateX(-50%) scale(1);
     }
 
-    /* rating preview area (after rating submitted) */
+    /* rating history / venture feedback */
     .rating-history {
-      background: #f8fafc;
-      margin: 1rem 1.5rem 1.8rem;
+      background: #faf9f2;
+      margin: 1rem 1.5rem 1.5rem;
       border-radius: 1.5rem;
-      padding: 1rem 1.2rem;
-      border-left: 4px solid #facc15;
+      padding: 1rem 1.3rem;
+      border-left: 5px solid #f5b042;
     }
 
     .rating-history h3 {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #475569;
-      margin-bottom: 0.5rem;
+      letter-spacing: 1.2px;
+      color: #4a6b5f;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
     }
 
     .latest-rating {
       font-size: 0.95rem;
-      color: #0f172a;
+      color: #1f2f2a;
       word-break: break-word;
     }
 
     .stars-preview {
       color: #f5b042;
       letter-spacing: 2px;
-      font-weight: 600;
+      font-weight: 700;
       margin-right: 6px;
     }
 
     .empty-state {
-      color: #94a3b8;
+      color: #8aa79b;
       font-style: italic;
     }
 
@@ -308,78 +315,90 @@
       margin: 0 1.5rem;
       border: 0;
       height: 1px;
-      background: #e2e8f0;
+      background: #e0e7e2;
     }
 
     footer {
       font-size: 0.7rem;
       text-align: center;
       padding: 1rem;
-      color: #64748b;
+      color: #5e7c6f;
+      font-weight: 500;
     }
 
     button:active {
       transform: scale(0.98);
+    }
+
+    .class-badge {
+      display: inline-block;
+      background: rgba(245,176,66,0.2);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin-top: 12px;
     }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  <!-- product / shop panel -->
+  <!-- product / venture simulation panel -->
   <div class="product-panel">
-    <h1>🍽️ The Golden Spoon</h1>
-    <div class="sub">exceptional service starts with your voice</div>
+    <h1>🚀 MGT 101: Venture Pulse</h1>
+    <div class="sub">customer obsession • mandatory feedback loop</div>
     <div class="product-card">
       <div class="product-info">
         <div class="product-name">
-          <span>🥘 Your Product</span>
+          <span>📘 Founders' Toolkit (MVP Session)</span>
         </div>
-        <div class="product-price">$49.99</div>
+        <div class="product-price">Entrepreneurship Lab • $19.99 prototype access</div>
       </div>
-      <button class="buy-btn" id="buyButton">✨ Buy Now</button>
+      <button class="buy-btn" id="buyButton">⚡ Simulate Purchase</button>
     </div>
-    <div style="margin-top: 12px; font-size: 0.75rem; opacity: 0.7;">⭐ mandatory rating after purchase — cannot skip</div>
+    <div class="class-badge">🎓 MGT Intro to Entrepreneurship — mandatory service rating (no skip)</div>
   </div>
 
-  <!-- rating history / latest feedback (demo) -->
+  <!-- rating history / venture feedback panel -->
   <div class="rating-history" id="ratingHistoryBlock">
-    <h3>📋 Your most recent rating</h3>
-    <div id="latestRatingDisplay" class="latest-rating empty-state">— no rating yet. complete a purchase to review your waiter —</div>
+    <h3>📋 LAST FEEDBACK · ENTREPRENEURSHIP JOURNAL</h3>
+    <div id="latestRatingDisplay" class="latest-rating empty-state">— no venture feedback yet. complete a purchase & rate the student entrepreneur —</div>
   </div>
   <hr />
-  <footer>every purchase requires rating • genuine feedback helps our team</footer>
+  <footer>⚡ every transaction requires a rating • real-world entrepreneurial accountability</footer>
 </div>
 
-<!-- MANDATORY RATING MODAL (unskippable) -->
+<!-- MANDATORY RATING MODAL (unskippable) - course context: "rate the venture host / student entrepreneur" -->
 <div id="ratingModal" class="rating-overlay">
   <div class="rating-modal">
-    <h2>🍷 Rate your waiter</h2>
-    <p>Your feedback is essential — you cannot proceed without rating.</p>
+    <h2>⭐ Rate this Entrepreneur</h2>
+    <p>As part of MGT course ethics, you must evaluate the venture experience.<br> <strong>Cannot be skipped</strong> — stars + qualitative feedback.</p>
     
     <!-- star rating interactive -->
     <div class="star-rating" id="starWidget">
-      <!-- 5 stars generated via JS but we can hardcode or dynamic -->
+      <!-- stars injected via JS -->
     </div>
     
-    <textarea id="reasonText" class="reason-field" rows="3" placeholder="Why this rating? e.g., 'attentive, friendly, fast service' or 'needs improvement...' (optional but recommended)"></textarea>
+    <textarea id="reasonText" class="reason-field" rows="3" placeholder="Why this rating? (e.g., value proposition, communication, prototype clarity, professionalism...)"></textarea>
     
-    <button id="submitRatingBtn" class="submit-rating-btn">✅ Submit rating & continue</button>
-    <div class="close-attempt">⛔ rating required — no close button, no escape</div>
+    <button id="submitRatingBtn" class="submit-rating-btn">✅ Submit & continue to reflection</button>
+    <div class="close-attempt">🔒 rating mandatory — no escape, no dismiss</div>
   </div>
 </div>
 
-<div id="toastMsg" class="toast-message">✨ Thanks for your review!</div>
+<div id="toastMsg" class="toast-message">✨ Feedback recorded — thank you, entrepreneur!</div>
 
 <script>
   (function() {
     // ---------- STATE ----------
     let currentStars = 0;           // 0 = no star selected
-    let purchaseMade = false;       // track if product bought -> unlocks modal requirement
+    let purchaseMade = false;       // track if product bought -> triggers modal
     let modalActive = false;        // modal visibility state
-    let ratingSubmitted = false;     // once rating given, we don't show modal again until next purchase
+    let ratingSubmitted = false;     // rating given flag
 
-    // For demo persistence (in-memory per session, but feels realistic)
+    // For demo persistence (in-memory + localStorage)
     let latestRating = {
       stars: null,
       reason: null,
@@ -396,7 +415,7 @@
     const toastMsg = document.getElementById('toastMsg');
 
     // Helper: show toast message
-    function showToast(message, duration = 2500) {
+    function showToast(message, duration = 2800) {
       toastMsg.textContent = message;
       toastMsg.classList.add('show');
       setTimeout(() => {
@@ -409,16 +428,17 @@
       if (latestRating.stars !== null && latestRating.stars > 0) {
         const starCount = latestRating.stars;
         const starString = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
-        const reasonSnippet = latestRating.reason ? ` — "${latestRating.reason.substring(0, 70)}${latestRating.reason.length > 70 ? '…' : ''}"` : '';
-        latestRatingDisplay.innerHTML = `<span class="stars-preview">${starString}</span> (${starCount}/5)${reasonSnippet}<br><span style="font-size:0.7rem; color:#475569;">rated at ${new Date(latestRating.timestamp).toLocaleTimeString()}</span>`;
+        const reasonSnippet = latestRating.reason ? ` — “${latestRating.reason.substring(0, 75)}${latestRating.reason.length > 75 ? '…' : ''}”` : '';
+        const timeStr = new Date(latestRating.timestamp).toLocaleString();
+        latestRatingDisplay.innerHTML = `<span class="stars-preview">${starString}</span> (${starCount}/5)${reasonSnippet}<br><span style="font-size:0.7rem; color:#4a6b5f;">rated at ${timeStr}</span>`;
         latestRatingDisplay.classList.remove('empty-state');
       } else {
-        latestRatingDisplay.innerHTML = '— no rating yet. complete a purchase to review your waiter —';
+        latestRatingDisplay.innerHTML = '— no venture feedback yet. complete a purchase & rate the student entrepreneur —';
         latestRatingDisplay.classList.add('empty-state');
       }
     }
 
-    // render star rating widget and attach events
+    // render star rating widget
     function buildStarWidget(initialStars = 0) {
       starContainer.innerHTML = '';
       for (let i = 1; i <= 5; i++) {
@@ -453,7 +473,7 @@
       });
     }
 
-    // reset modal fields (but keep star selection default zero)
+    // reset modal fields
     function resetModalFields() {
       currentStars = 0;
       setStars(0);
@@ -463,14 +483,11 @@
     // open modal and block everything (unskippable)
     function openRatingModal() {
       if (modalActive) return;
-      // reset fields for fresh rating
       resetModalFields();
       modalOverlay.classList.add('active');
       modalActive = true;
       purchaseMade = true;
-      // prevent background scroll
       document.body.style.overflow = 'hidden';
-      // Additional "unskippable" : disable escape key & click on backdrop won't close
     }
 
     // close modal after successful rating submission
@@ -480,152 +497,15 @@
       document.body.style.overflow = '';
     }
 
-    // handle rating submission (validation mandatory)
-    function submitRating() {
-      // MANDATORY: at least 1 star
-      if (currentStars === 0) {
-        showToast('❌ Please select a star rating (1 to 5 stars) — you cannot skip this step.', 2800);
-        // visual shake effect to highlight
-        const starArea = document.querySelector('.star-rating');
-        starArea.style.transform = 'shake 0.3s ease';
-        starArea.style.animation = 'shake 0.3s ease';
-        setTimeout(() => { starArea.style.animation = ''; }, 400);
-        return;
+    // save rating to localStorage & update UI
+    function persistRatingLocally() {
+      if (latestRating.stars) {
+        localStorage.setItem('mgt_venture_rating', JSON.stringify(latestRating));
       }
-      
-      const reason = reasonTextarea.value.trim();
-      // reason can be empty string, but it's allowed. however we store it.
-      const finalReason = reason === '' ? '(no comment provided)' : reason;
-      
-      // save rating to memory
-      latestRating = {
-        stars: currentStars,
-        reason: finalReason,
-        timestamp: Date.now()
-      };
-      updateRatingPreview();
-      
-      // show success toast
-      showToast(`⭐ Rated ${currentStars} stars — thank you for your feedback!`, 3000);
-      
-      // close modal and mark rating as submitted for this purchase
-      closeModal();
-      ratingSubmitted = true;
-      purchaseMade = false;    // reset purchase flag (so further purchases will trigger again)
-      
-      // additional user feedback to show that rating is stored
-      // optional console log, but no need.
     }
-    
-    // BUY action: simulates purchase, then triggers mandatory rating modal
-    function handleBuy() {
-      // If there is already an active modal, don't stack
-      if (modalActive) {
-        showToast('Please complete current rating first.', 1500);
-        return;
-      }
-      
-      // Simulate purchase action: show quick "purchased" effect
-      const buyBtn = document.getElementById('buyButton');
-      const originalText = buyBtn.innerHTML;
-      buyBtn.innerHTML = '✅ Added!';
-      setTimeout(() => {
-        buyBtn.innerHTML = originalText;
-      }, 800);
-      
-      // Show purchase success then open unskippable rating modal
-      showToast('Purchase successful! Now please rate your waiter.', 2000);
-      
-      // slight delay to let toast feel natural, but open modal quickly
-      setTimeout(() => {
-        // prevent opening if already open
-        if (!modalActive) {
-          openRatingModal();
-        }
-      }, 200);
-    }
-    
-    // ----- UNSKIPPABLE FEATURES: disable ESC key and backdrop click -----
-    function blockEscapeAndBackdrop() {
-      // ESC key should NOT close modal when active
-      window.addEventListener('keydown', (e) => {
-        if (modalActive && (e.key === 'Escape' || e.key === 'Esc')) {
-          e.preventDefault();
-          e.stopPropagation();
-          showToast('⚠️ Rating is required — please complete the stars & submit.', 1800);
-          return false;
-        }
-      });
-      
-      // click on overlay background (modal backdrop) should also NOT close
-      modalOverlay.addEventListener('click', (e) => {
-        if (modalActive && e.target === modalOverlay) {
-          e.preventDefault();
-          showToast('🔒 You must rate the waiter before continuing.', 1700);
-          return;
-        }
-      });
-      
-      // any attempt to click outside? modal overlay click above handled.
-      // also disable tabbing out? not needed but fine.
-    }
-    
-    // optional additional: ensure that if user tries to close via browser back or refresh? not necessary but we warn
-    window.addEventListener('beforeunload', (e) => {
-      if (modalActive) {
-        const confirmationMessage = 'You have an unfinished rating. Please complete the rating before leaving.';
-        e.preventDefault();
-        e.returnValue = confirmationMessage;
-        return confirmationMessage;
-      }
-    });
-    
-    // reinitialize star widget after modal opens? we already build it once globally and reset
-    // Build initial widget
-    buildStarWidget(0);
-    
-    // attach buy event
-    buyButton.addEventListener('click', handleBuy);
-    submitBtn.addEventListener('click', submitRating);
-    
-    // block unskippable behaviors
-    blockEscapeAndBackdrop();
-    
-    // Additional: if modal open and user tries to click submit with 0 stars -> prevented by validation.
-    // also we handle reason field optional, but no skip.
-    // to guarantee that after purchase modal cannot be bypassed: we never add close button.
-    // Also remove any native 'X' close icon.
-    
-    // Ensure modal is hidden initially
-    modalOverlay.classList.remove('active');
-    modalActive = false;
-    document.body.style.overflow = '';
-    
-    // Edge case: If user tries to purchase again while modal not active -> works
-    // after rating submitted, purchaseMade flag resets. But latestRating can be shown.
-    // All good.
-    
-    // small improvement: pressing enter on textarea does not submit by accident (only button)
-    reasonTextarea.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.ctrlKey) {
-        e.preventDefault();
-        submitRating();
-      }
-    });
-    
-    // also we could show a fallback if multiple purchases: each purchase re-opens modal mandatory.
-    // Perfect!
-    
-    // initial preview load (empty)
-    updateRatingPreview();
-    
-    // Additional extra: Because we are in a GitHub website context, no backend needed.
-    // Simulate that after rating, we store it locally (in-memory). On page refresh the rating will be lost? That's fine.
-    // But user experience: if they refresh the page after rating, the purchase + rating flow resets. That's normal.
-    // For better demo, we can store in localStorage optionally but not required.
-    // OPTIONAL: Persist rating across refresh to make it more real? Let's add optional localStorage.
+
     function loadPersistedRating() {
-      const stored = localStorage.getItem('waiter_last_rating');
+      const stored = localStorage.getItem('mgt_venture_rating');
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
@@ -636,79 +516,131 @@
         } catch(e) {}
       }
     }
-    function persistRating() {
-      if (latestRating.stars) {
-        localStorage.setItem('waiter_last_rating', JSON.stringify(latestRating));
-      }
-    }
-    // override submitRating to persist
-    const originalSubmit = submitRating;
-    // we replace but keep original logic, then add persistence.
-    window.submitRating = submitRating; // no, just override safely
-    const newSubmit = function() {
-      // call the logic that updates latestRating (we will call the same core)
-      // but to avoid double wrapping, we'll override the global function but careful
+
+    // handle rating submission (mandatory star validation)
+    function submitRatingHandler() {
       if (currentStars === 0) {
-        showToast('❌ Please select a star rating (1 to 5 stars) — you cannot skip this step.', 2800);
-        return;
-      }
-      const reason = reasonTextarea.value.trim();
-      const finalReason = reason === '' ? '(no comment provided)' : reason;
-      latestRating = {
-        stars: currentStars,
-        reason: finalReason,
-        timestamp: Date.now()
-      };
-      updateRatingPreview();
-      persistRating(); // save to localStorage
-      showToast(`⭐ Rated ${currentStars} stars — thank you for your feedback!`, 3000);
-      closeModal();
-      ratingSubmitted = true;
-      purchaseMade = false;
-    };
-    // replace submit handler
-    submitBtn.onclick = (e) => {
-      e.preventDefault();
-      if (currentStars === 0) {
-        showToast('❌ Please select a star rating (1 to 5 stars) — you cannot skip this step.', 2800);
+        showToast('❌ Please select a star rating (1–5 stars) — mandatory feedback for MGT course.', 3000);
         const starArea = document.querySelector('.star-rating');
         starArea.style.transform = 'shake 0.3s ease';
         starArea.style.animation = 'shake 0.3s ease';
         setTimeout(() => { starArea.style.animation = ''; }, 400);
         return;
       }
+      
       const reason = reasonTextarea.value.trim();
-      const finalReason = reason === '' ? '(no comment provided)' : reason;
+      const finalReason = reason === '' ? '(no comment provided — but stars are required)' : reason;
+      
+      // save rating
       latestRating = {
         stars: currentStars,
         reason: finalReason,
         timestamp: Date.now()
       };
       updateRatingPreview();
-      persistRating();
-      showToast(`⭐ Rated ${currentStars} stars — thank you for your feedback!`, 3000);
+      persistRatingLocally();
+      
+      // success message with course tone
+      showToast(`⭐ Rated ${currentStars} stars · thank you for entrepreneurial feedback!`, 3200);
+      
       closeModal();
       ratingSubmitted = true;
       purchaseMade = false;
-    };
+    }
     
-    // Load persisted rating from localStorage
-    loadPersistedRating();
+    // BUY action: simulates purchase, triggers mandatory rating
+    function handleBuy() {
+      if (modalActive) {
+        showToast('Please complete current rating first — accountability required.', 1700);
+        return;
+      }
+      
+      const buyBtn = document.getElementById('buyButton');
+      const originalText = buyBtn.innerHTML;
+      buyBtn.innerHTML = '✅ Venture purchased!';
+      setTimeout(() => {
+        buyBtn.innerHTML = originalText;
+      }, 800);
+      
+      showToast('Purchase successful! Now rate the student entrepreneur (mandatory).', 2100);
+      
+      setTimeout(() => {
+        if (!modalActive) {
+          openRatingModal();
+        }
+      }, 200);
+    }
     
-    // define shake animation if not present
-    if (!document.querySelector('#shakeStyle')) {
-      const style = document.createElement('style');
-      style.id = 'shakeStyle';
-      style.textContent = `
+    // ----- UNSKIPPABLE FEATURES: disable ESC and backdrop click -----
+    function enforceUnskippable() {
+      window.addEventListener('keydown', (e) => {
+        if (modalActive && (e.key === 'Escape' || e.key === 'Esc')) {
+          e.preventDefault();
+          e.stopPropagation();
+          showToast('⛔ Rating required by MGT course policy — please submit your evaluation.', 2000);
+          return false;
+        }
+      });
+      
+      modalOverlay.addEventListener('click', (e) => {
+        if (modalActive && e.target === modalOverlay) {
+          e.preventDefault();
+          showToast('🔒 You must rate the entrepreneur before proceeding (no skip).', 1900);
+          return;
+        }
+      });
+    }
+    
+    // beforeunload warning if modal active
+    window.addEventListener('beforeunload', (e) => {
+      if (modalActive) {
+        const msg = 'Unfinished rating — please complete your mandatory entrepreneur evaluation.';
+        e.preventDefault();
+        e.returnValue = msg;
+        return msg;
+      }
+    });
+    
+    // add shake css if not present
+    if (!document.querySelector('#shakeDynamicStyle')) {
+      const styleNode = document.createElement('style');
+      styleNode.id = 'shakeDynamicStyle';
+      styleNode.textContent = `
         @keyframes shake {
           0% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
+          25% { transform: translateX(-6px); }
+          75% { transform: translateX(6px); }
           100% { transform: translateX(0); }
         }
       `;
-      document.head.appendChild(style);
+      document.head.appendChild(styleNode);
     }
+    
+    // initial build & event binding
+    buildStarWidget(0);
+    buyButton.addEventListener('click', handleBuy);
+    submitBtn.addEventListener('click', submitRatingHandler);
+    enforceUnskippable();
+    
+    // Load persisted rating from previous sessions
+    loadPersistedRating();
+    
+    // ensure modal hidden at start
+    modalOverlay.classList.remove('active');
+    modalActive = false;
+    document.body.style.overflow = '';
+    
+    // Additional: update course-specific preview after any rating.
+    // also if textarea ctrl+enter submits
+    reasonTextarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        submitRatingHandler();
+      }
+    });
+    
+    // final check: if somehow rating not submitted but modal left open? already enforced.
+    console.log('MGT Entrepreneurship Feedback System — mandatory rating ready');
   })();
 </script>
 </body>
