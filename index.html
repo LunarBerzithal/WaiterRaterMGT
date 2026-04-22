@@ -3,645 +3,588 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>MGT Entrepreneurship · Venture Feedback Simulator</title>
+  <title>Restaurant Owner · Waiter Performance Tracker</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     }
 
     body {
-      background: linear-gradient(145deg, #f0f4f8 0%, #e6edf4 100%);
-      min-height: 100vh;
+      background: #eef2f0;
+      padding: 2rem 1.5rem;
+    }
+
+    /* main layout */
+    .owner-dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* header */
+    .dashboard-header {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-
-    /* main card container */
-    .app-container {
-      max-width: 720px;
-      width: 100%;
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(1px);
-      border-radius: 2.5rem;
-      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.02);
-      overflow: hidden;
-      transition: all 0.2s ease;
-    }
-
-    /* header & product section */
-    .product-panel {
-      background: #0b2b26;
-      background-image: radial-gradient(circle at 10% 20%, rgba(255,215,130,0.08) 2%, transparent 2.5%);
-      background-size: 28px 28px;
-      color: white;
-      padding: 2rem 2rem 1.8rem;
-      text-align: center;
-    }
-
-    .product-panel h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      margin-bottom: 0.5rem;
-    }
-
-    .product-panel .sub {
-      opacity: 0.8;
-      font-size: 0.9rem;
-      margin-bottom: 1.4rem;
-      font-weight: 400;
-    }
-
-    .product-card {
-      background: #0f2e28e0;
-      backdrop-filter: blur(4px);
-      border-radius: 2rem;
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
-      margin-top: 0.75rem;
-      border: 1px solid rgba(255,215,130,0.3);
-    }
-
-    .product-info {
-      text-align: left;
-    }
-
-    .product-name {
-      font-weight: 800;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .product-price {
-      font-size: 0.9rem;
-      opacity: 0.85;
-      margin-top: 5px;
-      font-family: monospace;
-    }
-
-    .buy-btn {
-      background: #f5b042;
-      border: none;
-      color: #0b2b26;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.7rem 1.8rem;
-      border-radius: 3rem;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .buy-btn:hover {
-      background: #ffc55a;
-      transform: scale(1.02);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-    }
-
-    /* rating modal overlay (unskippable) */
-    .rating-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 0.2s, opacity 0.2s ease;
-    }
-
-    .rating-overlay.active {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .rating-modal {
+      margin-bottom: 2rem;
       background: white;
-      max-width: 500px;
-      width: 90%;
+      padding: 1.2rem 2rem;
       border-radius: 2rem;
-      padding: 2rem 1.8rem 2rem;
-      text-align: center;
-      box-shadow: 0 40px 70px rgba(0,0,0,0.35);
-      animation: fadeSlideUp 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .title-section h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e3c2c, #2b5e3b);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .title-section p {
+      color: #4a5b52;
+      font-size: 0.85rem;
+    }
+    .stats-badge {
+      background: #f5efe6;
+      padding: 0.5rem 1.2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      color: #2c5e3a;
+      font-size: 0.85rem;
     }
 
-    @keyframes fadeSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(24px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* two column: left (waiter list) + right (rating panel & logs) */
+    .waiter-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 1.8rem;
     }
 
-    .rating-modal h2 {
-      font-size: 1.9rem;
-      font-weight: 800;
-      color: #0b2b26;
-      margin-bottom: 0.25rem;
+    /* waiter cards column */
+    .waiters-panel {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
     }
-
-    .rating-modal p {
-      color: #2c4a3e;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-    }
-
-    /* star rating widget */
-    .star-rating {
+    .waiters-panel h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1.2rem;
       display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-left: 4px solid #e6b422;
+      padding-left: 0.8rem;
+    }
+    .waiter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .waiter-card {
+      background: #fefcf8;
+      border-radius: 1.4rem;
+      padding: 1rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      border: 1px solid #e9e4da;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .waiter-card.selected {
+      border: 2px solid #e6b422;
+      background: #fffaf0;
+      box-shadow: 0 4px 12px rgba(230,180,34,0.15);
+    }
+    .waiter-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .waiter-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1a2e24;
+    }
+    .waiter-stats {
+      font-size: 0.75rem;
+      color: #6f7c74;
+      margin-top: 4px;
+      display: flex;
+      gap: 0.8rem;
+    }
+    .avg-stars {
+      color: #e6b422;
+      font-weight: 600;
+    }
+    .rating-badge {
+      background: #e6b42220;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .empty-waiters {
+      color: #8f9e94;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    /* right side: rating simulator & owner logs */
+    .insight-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+    .simulate-card {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.6rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .simulate-card h3 {
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    .selected-waiter-info {
+      background: #f2f6f3;
+      border-radius: 1.2rem;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .star-rating-input {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
       justify-content: center;
-      gap: 0.65rem;
-      margin: 1rem 0 1.5rem;
-      direction: ltr;
     }
-
-    .star {
-      font-size: 3rem;
-      cursor: pointer;
-      transition: transform 0.1s, color 0.1s;
-      color: #cbd5e1;
+    .star-btn {
+      font-size: 2.2rem;
       background: none;
       border: none;
-      padding: 0;
-      line-height: 1;
+      cursor: pointer;
+      color: #cdd7d0;
+      transition: 0.1s;
     }
-
-    .star.selected {
-      color: #f5b042;
-      text-shadow: 0 0 3px #f0a020;
-    }
-
-    .star:hover {
-      transform: scale(1.12);
+    .star-btn.active-star {
       color: #f5b042;
     }
-
-    /* reason textarea */
-    .reason-field {
+    .review-input {
       width: 100%;
-      padding: 0.9rem 1rem;
-      font-size: 0.95rem;
-      border-radius: 1.5rem;
-      border: 1.5px solid #d0dfd9;
-      background: #fefefe;
-      font-family: inherit;
+      padding: 0.8rem;
+      border-radius: 1.2rem;
+      border: 1px solid #ddd8cd;
+      margin: 0.8rem 0;
       resize: vertical;
-      transition: 0.2s;
-      margin: 0.5rem 0 1.8rem;
     }
-
-    .reason-field:focus {
-      border-color: #f5b042;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(245,176,66,0.25);
-    }
-
     .submit-rating-btn {
-      background: #0b2b26;
+      background: #2b5e3b;
       color: white;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.9rem 1.2rem;
-      width: 100%;
       border: none;
-      border-radius: 2.5rem;
+      padding: 0.7rem;
+      width: 100%;
+      border-radius: 2rem;
+      font-weight: 700;
       cursor: pointer;
       transition: 0.2s;
-      margin-top: 0.2rem;
     }
-
     .submit-rating-btn:hover {
-      background: #1a403a;
-      transform: translateY(-2px);
+      background: #1e452d;
     }
-
-    .close-attempt {
-      margin-top: 1rem;
-      font-size: 0.7rem;
-      color: #7e9a8f;
-      background: none;
-      border: none;
-      cursor: default;
-      pointer-events: none;
+    .logs-card {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
     }
-
-    /* toast message */
-    .toast-message {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%) scale(0.9);
-      background: #0b2b26;
-      color: #fef7e0;
-      padding: 12px 26px;
-      border-radius: 60px;
-      font-weight: 500;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-      opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
-      pointer-events: none;
-      z-index: 1100;
-      white-space: nowrap;
-      backdrop-filter: blur(4px);
-      font-size: 0.9rem;
+    .logs-card h3 {
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
-
-    .toast-message.show {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
+    .log-list {
+      max-height: 260px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
     }
-
-    /* rating history / venture feedback */
-    .rating-history {
-      background: #faf9f2;
-      margin: 1rem 1.5rem 1.5rem;
-      border-radius: 1.5rem;
-      padding: 1rem 1.3rem;
-      border-left: 5px solid #f5b042;
-    }
-
-    .rating-history h3 {
+    .log-item {
+      background: #faf7f0;
+      border-radius: 1rem;
+      padding: 0.7rem;
+      border-left: 4px solid #e6b422;
       font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: #4a6b5f;
-      margin-bottom: 0.6rem;
+    }
+    .log-waiter {
       font-weight: 700;
+      color: #2b5e3b;
     }
-
-    .latest-rating {
-      font-size: 0.95rem;
-      color: #1f2f2a;
-      word-break: break-word;
-    }
-
-    .stars-preview {
-      color: #f5b042;
-      letter-spacing: 2px;
-      font-weight: 700;
-      margin-right: 6px;
-    }
-
-    .empty-state {
-      color: #8aa79b;
-      font-style: italic;
-    }
-
-    hr {
-      margin: 0 1.5rem;
-      border: 0;
-      height: 1px;
-      background: #e0e7e2;
-    }
-
-    footer {
-      font-size: 0.7rem;
+    .empty-log {
+      color: #9aa89f;
       text-align: center;
       padding: 1rem;
-      color: #5e7c6f;
-      font-weight: 500;
     }
 
-    button:active {
-      transform: scale(0.98);
+    /* responsiveness */
+    @media (max-width: 800px) {
+      .waiter-grid {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding: 1rem;
+      }
     }
-
-    .class-badge {
-      display: inline-block;
-      background: rgba(245,176,66,0.2);
-      border-radius: 30px;
-      padding: 4px 12px;
+    button {
+      cursor: pointer;
+    }
+    .highlight {
+      font-weight: bold;
+    }
+    footer {
+      margin-top: 2rem;
+      text-align: center;
       font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      margin-top: 12px;
+      color: #6c7c72;
     }
   </style>
 </head>
 <body>
+<div class="owner-dashboard">
+  <div class="dashboard-header">
+    <div class="title-section">
+      <h1>🍽️ Waiter Performance Hub</h1>
+      <p>Restaurant owner dashboard · track real feedback & identify top performers</p>
+    </div>
+    <div class="stats-badge" id="totalRatingsBadge">📊 total ratings: 0</div>
+  </div>
 
-<div class="app-container">
-  <!-- product / venture simulation panel -->
-  <div class="product-panel">
-    <h1>🚀 MGT 101: Venture Pulse</h1>
-    <div class="sub">customer obsession • mandatory feedback loop</div>
-    <div class="product-card">
-      <div class="product-info">
-        <div class="product-name">
-          <span>📘 Founders' Toolkit (MVP Session)</span>
-        </div>
-        <div class="product-price">Entrepreneurship Lab • $19.99 prototype access</div>
+  <div class="waiter-grid">
+    <!-- LEFT: waiter list & performance overview -->
+    <div class="waiters-panel">
+      <h2>👥 Waitstaff Roster</h2>
+      <div id="waiterListContainer" class="waiter-list">
+        <!-- dynamic waiter cards injected -->
       </div>
-      <button class="buy-btn" id="buyButton">⚡ Simulate Purchase</button>
     </div>
-    <div class="class-badge">🎓 MGT Intro to Entrepreneurship — mandatory service rating (no skip)</div>
-  </div>
 
-  <!-- rating history / venture feedback panel -->
-  <div class="rating-history" id="ratingHistoryBlock">
-    <h3>📋 LAST FEEDBACK · ENTREPRENEURSHIP JOURNAL</h3>
-    <div id="latestRatingDisplay" class="latest-rating empty-state">— no venture feedback yet. complete a purchase & rate the student entrepreneur —</div>
-  </div>
-  <hr />
-  <footer>⚡ every transaction requires a rating • real-world entrepreneurial accountability</footer>
-</div>
+    <!-- RIGHT: rating simulator + recent activity log -->
+    <div class="insight-panel">
+      <!-- Rating simulator for restaurant owners (they simulate customer feedback) -->
+      <div class="simulate-card">
+        <h3>⭐ Record Customer Feedback</h3>
+        <div id="selectedWaiterDisplay" class="selected-waiter-info">
+          <span>📌 Selected waiter:</span>
+          <strong id="selectedWaiterName">— none selected —</strong>
+        </div>
+        <div class="star-rating-input" id="dynamicStars">
+          <!-- stars injected -->
+        </div>
+        <textarea id="reviewReason" class="review-input" rows="2" placeholder="Why this rating? (e.g., friendly, slow, attentive, forgot order...)"></textarea>
+        <button id="submitFeedbackBtn" class="submit-rating-btn">✅ Submit rating & update performance</button>
+        <p style="font-size: 0.7rem; margin-top: 0.6rem; color:#6e7f75;">⭐ ratings 1–5 stars · helps identify who is doing great and who needs coaching</p>
+      </div>
 
-<!-- MANDATORY RATING MODAL (unskippable) - course context: "rate the venture host / student entrepreneur" -->
-<div id="ratingModal" class="rating-overlay">
-  <div class="rating-modal">
-    <h2>⭐ Rate this Entrepreneur</h2>
-    <p>As part of MGT course ethics, you must evaluate the venture experience.<br> <strong>Cannot be skipped</strong> — stars + qualitative feedback.</p>
-    
-    <!-- star rating interactive -->
-    <div class="star-rating" id="starWidget">
-      <!-- stars injected via JS -->
+      <!-- Recent feedback log -->
+      <div class="logs-card">
+        <h3>📋 Recent feedback log (owner view)</h3>
+        <div id="feedbackLogList" class="log-list">
+          <div class="empty-log">No ratings yet. Submit a test rating to see waiter performance.</div>
+        </div>
+      </div>
     </div>
-    
-    <textarea id="reasonText" class="reason-field" rows="3" placeholder="Why this rating? (e.g., value proposition, communication, prototype clarity, professionalism...)"></textarea>
-    
-    <button id="submitRatingBtn" class="submit-rating-btn">✅ Submit & continue to reflection</button>
-    <div class="close-attempt">🔒 rating mandatory — no escape, no dismiss</div>
   </div>
+  <footer>🔍 Each rating directly impacts waiter's average · perfect tool to track service quality & staff performance.</footer>
 </div>
-
-<div id="toastMsg" class="toast-message">✨ Feedback recorded — thank you, entrepreneur!</div>
 
 <script>
-  (function() {
-    // ---------- STATE ----------
-    let currentStars = 0;           // 0 = no star selected
-    let purchaseMade = false;       // track if product bought -> triggers modal
-    let modalActive = false;        // modal visibility state
-    let ratingSubmitted = false;     // rating given flag
+  // ----- Data Model -----
+  let waiters = [
+    { id: 1, name: "Emily Rodriguez", ratings: [], average: 0 },
+    { id: 2, name: "James Chen", ratings: [], average: 0 },
+    { id: 3, name: "Sophia Martinez", ratings: [], average: 0 },
+    { id: 4, name: "Michael Okafor", ratings: [], average: 0 }
+  ];
 
-    // For demo persistence (in-memory + localStorage)
-    let latestRating = {
-      stars: null,
-      reason: null,
-      timestamp: null
+  // feedback log entries (owner timeline)
+  let feedbackLog = []; // each: { waiterName, stars, reason, timestamp }
+
+  // UI state
+  let selectedWaiterId = 1; // default select first waiter
+  let currentStarInput = 0;  // temporary rating value in simulator
+
+  // DOM elements
+  const waiterContainer = document.getElementById('waiterListContainer');
+  const selectedWaiterNameSpan = document.getElementById('selectedWaiterName');
+  const dynamicStarsDiv = document.getElementById('dynamicStars');
+  const reviewReasonText = document.getElementById('reviewReason');
+  const submitBtn = document.getElementById('submitFeedbackBtn');
+  const feedbackLogList = document.getElementById('feedbackLogList');
+  const totalRatingsBadge = document.getElementById('totalRatingsBadge');
+
+  // Helper: recalculate average for a waiter
+  function recalcAverage(waiter) {
+    if (!waiter.ratings.length) {
+      waiter.average = 0;
+      return 0;
+    }
+    const sum = waiter.ratings.reduce((acc, r) => acc + r.stars, 0);
+    waiter.average = sum / waiter.ratings.length;
+    return waiter.average;
+  }
+
+  // Update all waiters averages & re-render list
+  function refreshAllAverages() {
+    waiters.forEach(w => recalcAverage(w));
+    renderWaiterList();
+    updateTotalRatingsCount();
+  }
+
+  // update total ratings badge
+  function updateTotalRatingsCount() {
+    const total = waiters.reduce((acc, w) => acc + w.ratings.length, 0);
+    totalRatingsBadge.innerText = `📊 total ratings: ${total}`;
+  }
+
+  // add rating to specific waiter
+  function addRatingToWaiter(waiterId, stars, reasonText) {
+    const waiter = waiters.find(w => w.id === waiterId);
+    if (!waiter) return false;
+    const newRating = {
+      stars: stars,
+      reason: reasonText.trim() || "(no comment)",
+      timestamp: new Date().toLocaleString()
     };
-
-    // DOM elements
-    const buyButton = document.getElementById('buyButton');
-    const modalOverlay = document.getElementById('ratingModal');
-    const starContainer = document.getElementById('starWidget');
-    const reasonTextarea = document.getElementById('reasonText');
-    const submitBtn = document.getElementById('submitRatingBtn');
-    const latestRatingDisplay = document.getElementById('latestRatingDisplay');
-    const toastMsg = document.getElementById('toastMsg');
-
-    // Helper: show toast message
-    function showToast(message, duration = 2800) {
-      toastMsg.textContent = message;
-      toastMsg.classList.add('show');
-      setTimeout(() => {
-        toastMsg.classList.remove('show');
-      }, duration);
-    }
-
-    // update the rating preview in the side panel
-    function updateRatingPreview() {
-      if (latestRating.stars !== null && latestRating.stars > 0) {
-        const starCount = latestRating.stars;
-        const starString = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
-        const reasonSnippet = latestRating.reason ? ` — “${latestRating.reason.substring(0, 75)}${latestRating.reason.length > 75 ? '…' : ''}”` : '';
-        const timeStr = new Date(latestRating.timestamp).toLocaleString();
-        latestRatingDisplay.innerHTML = `<span class="stars-preview">${starString}</span> (${starCount}/5)${reasonSnippet}<br><span style="font-size:0.7rem; color:#4a6b5f;">rated at ${timeStr}</span>`;
-        latestRatingDisplay.classList.remove('empty-state');
-      } else {
-        latestRatingDisplay.innerHTML = '— no venture feedback yet. complete a purchase & rate the student entrepreneur —';
-        latestRatingDisplay.classList.add('empty-state');
-      }
-    }
-
-    // render star rating widget
-    function buildStarWidget(initialStars = 0) {
-      starContainer.innerHTML = '';
-      for (let i = 1; i <= 5; i++) {
-        const starBtn = document.createElement('button');
-        starBtn.setAttribute('data-value', i);
-        starBtn.classList.add('star');
-        starBtn.innerHTML = '★';
-        if (i <= initialStars) {
-          starBtn.classList.add('selected');
-        } else {
-          starBtn.classList.remove('selected');
-        }
-        starBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const value = parseInt(starBtn.getAttribute('data-value'), 10);
-          setStars(value);
-        });
-        starContainer.appendChild(starBtn);
-      }
-    }
-
-    function setStars(value) {
-      currentStars = value;
-      const allStars = document.querySelectorAll('#starWidget .star');
-      allStars.forEach((star, idx) => {
-        const starVal = idx + 1;
-        if (starVal <= currentStars) {
-          star.classList.add('selected');
-        } else {
-          star.classList.remove('selected');
-        }
-      });
-    }
-
-    // reset modal fields
-    function resetModalFields() {
-      currentStars = 0;
-      setStars(0);
-      reasonTextarea.value = '';
-    }
-
-    // open modal and block everything (unskippable)
-    function openRatingModal() {
-      if (modalActive) return;
-      resetModalFields();
-      modalOverlay.classList.add('active');
-      modalActive = true;
-      purchaseMade = true;
-      document.body.style.overflow = 'hidden';
-    }
-
-    // close modal after successful rating submission
-    function closeModal() {
-      modalOverlay.classList.remove('active');
-      modalActive = false;
-      document.body.style.overflow = '';
-    }
-
-    // save rating to localStorage & update UI
-    function persistRatingLocally() {
-      if (latestRating.stars) {
-        localStorage.setItem('mgt_venture_rating', JSON.stringify(latestRating));
-      }
-    }
-
-    function loadPersistedRating() {
-      const stored = localStorage.getItem('mgt_venture_rating');
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.stars) {
-            latestRating = parsed;
-            updateRatingPreview();
-          }
-        } catch(e) {}
-      }
-    }
-
-    // handle rating submission (mandatory star validation)
-    function submitRatingHandler() {
-      if (currentStars === 0) {
-        showToast('❌ Please select a star rating (1–5 stars) — mandatory feedback for MGT course.', 3000);
-        const starArea = document.querySelector('.star-rating');
-        starArea.style.transform = 'shake 0.3s ease';
-        starArea.style.animation = 'shake 0.3s ease';
-        setTimeout(() => { starArea.style.animation = ''; }, 400);
-        return;
-      }
-      
-      const reason = reasonTextarea.value.trim();
-      const finalReason = reason === '' ? '(no comment provided — but stars are required)' : reason;
-      
-      // save rating
-      latestRating = {
-        stars: currentStars,
-        reason: finalReason,
-        timestamp: Date.now()
-      };
-      updateRatingPreview();
-      persistRatingLocally();
-      
-      // success message with course tone
-      showToast(`⭐ Rated ${currentStars} stars · thank you for entrepreneurial feedback!`, 3200);
-      
-      closeModal();
-      ratingSubmitted = true;
-      purchaseMade = false;
-    }
+    waiter.ratings.push(newRating);
+    recalcAverage(waiter);
     
-    // BUY action: simulates purchase, triggers mandatory rating
-    function handleBuy() {
-      if (modalActive) {
-        showToast('Please complete current rating first — accountability required.', 1700);
-        return;
-      }
-      
-      const buyBtn = document.getElementById('buyButton');
-      const originalText = buyBtn.innerHTML;
-      buyBtn.innerHTML = '✅ Venture purchased!';
-      setTimeout(() => {
-        buyBtn.innerHTML = originalText;
-      }, 800);
-      
-      showToast('Purchase successful! Now rate the student entrepreneur (mandatory).', 2100);
-      
-      setTimeout(() => {
-        if (!modalActive) {
-          openRatingModal();
-        }
-      }, 200);
-    }
-    
-    // ----- UNSKIPPABLE FEATURES: disable ESC and backdrop click -----
-    function enforceUnskippable() {
-      window.addEventListener('keydown', (e) => {
-        if (modalActive && (e.key === 'Escape' || e.key === 'Esc')) {
-          e.preventDefault();
-          e.stopPropagation();
-          showToast('⛔ Rating required by MGT course policy — please submit your evaluation.', 2000);
-          return false;
-        }
-      });
-      
-      modalOverlay.addEventListener('click', (e) => {
-        if (modalActive && e.target === modalOverlay) {
-          e.preventDefault();
-          showToast('🔒 You must rate the entrepreneur before proceeding (no skip).', 1900);
-          return;
-        }
-      });
-    }
-    
-    // beforeunload warning if modal active
-    window.addEventListener('beforeunload', (e) => {
-      if (modalActive) {
-        const msg = 'Unfinished rating — please complete your mandatory entrepreneur evaluation.';
-        e.preventDefault();
-        e.returnValue = msg;
-        return msg;
-      }
+    // push to owner log
+    feedbackLog.unshift({
+      waiterName: waiter.name,
+      stars: stars,
+      reason: reasonText.trim() || "(no comment)",
+      timestamp: new Date().toLocaleString(),
+      avgAfter: waiter.average.toFixed(1)
     });
+    // keep log reasonable (max 30 entries)
+    if (feedbackLog.length > 30) feedbackLog.pop();
     
-    // add shake css if not present
-    if (!document.querySelector('#shakeDynamicStyle')) {
-      const styleNode = document.createElement('style');
-      styleNode.id = 'shakeDynamicStyle';
-      styleNode.textContent = `
-        @keyframes shake {
-          0% { transform: translateX(0); }
-          25% { transform: translateX(-6px); }
-          75% { transform: translateX(6px); }
-          100% { transform: translateX(0); }
-        }
+    renderWaiterList();        // refresh left panel
+    renderFeedbackLog();       // refresh right log
+    updateTotalRatingsCount();
+    return true;
+  }
+
+  // render waiter cards (left side)
+  function renderWaiterList() {
+    if (!waiterContainer) return;
+    waiterContainer.innerHTML = '';
+    waiters.forEach(waiter => {
+      const avgStars = waiter.average;
+      const ratingCount = waiter.ratings.length;
+      const avgDisplay = avgStars === 0 ? '—' : avgStars.toFixed(1);
+      
+      const card = document.createElement('div');
+      card.className = `waiter-card ${selectedWaiterId === waiter.id ? 'selected' : ''}`;
+      card.setAttribute('data-id', waiter.id);
+      
+      card.innerHTML = `
+        <div class="waiter-info">
+          <div class="waiter-name">${escapeHtml(waiter.name)}</div>
+          <div class="waiter-stats">
+            <span>⭐ avg: <span class="avg-stars">${avgDisplay}</span></span>
+            <span>📝 ${ratingCount} rating${ratingCount !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+        <div class="rating-badge">
+          ${avgStars > 4 ? '🏆 top' : avgStars >= 3 ? '👍 solid' : ratingCount === 0 ? '🆕 new' : '⚠️ needs review'}
+        </div>
       `;
-      document.head.appendChild(styleNode);
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectWaiter(waiter.id);
+      });
+      waiterContainer.appendChild(card);
+    });
+    // update selected name display
+    const selected = waiters.find(w => w.id === selectedWaiterId);
+    if (selected) {
+      selectedWaiterNameSpan.innerText = selected.name;
+    } else if (waiters.length) {
+      selectWaiter(waiters[0].id);
+    } else {
+      selectedWaiterNameSpan.innerText = "— none —";
     }
-    
-    // initial build & event binding
-    buildStarWidget(0);
-    buyButton.addEventListener('click', handleBuy);
-    submitBtn.addEventListener('click', submitRatingHandler);
-    enforceUnskippable();
-    
-    // Load persisted rating from previous sessions
-    loadPersistedRating();
-    
-    // ensure modal hidden at start
-    modalOverlay.classList.remove('active');
-    modalActive = false;
-    document.body.style.overflow = '';
-    
-    // Additional: update course-specific preview after any rating.
-    // also if textarea ctrl+enter submits
-    reasonTextarea.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        submitRatingHandler();
+  }
+  
+  // select waiter helper
+  function selectWaiter(id) {
+    selectedWaiterId = id;
+    const waiterExists = waiters.some(w => w.id === id);
+    if (!waiterExists && waiters.length) selectedWaiterId = waiters[0].id;
+    renderWaiterList();  // re-render to show highlight
+    // reset star input UI
+    currentStarInput = 0;
+    updateStarUI();
+    reviewReasonText.value = '';
+  }
+  
+  // star rating widget (simulator)
+  function buildStarWidget() {
+    dynamicStarsDiv.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const starBtn = document.createElement('button');
+      starBtn.classList.add('star-btn');
+      starBtn.innerHTML = '★';
+      starBtn.setAttribute('data-star-value', i);
+      starBtn.addEventListener('click', () => {
+        currentStarInput = i;
+        updateStarUI();
+      });
+      dynamicStarsDiv.appendChild(starBtn);
+    }
+    updateStarUI();
+  }
+  
+  function updateStarUI() {
+    const stars = document.querySelectorAll('#dynamicStars .star-btn');
+    stars.forEach((star, idx) => {
+      const val = idx + 1;
+      if (val <= currentStarInput) {
+        star.classList.add('active-star');
+      } else {
+        star.classList.remove('active-star');
       }
     });
+  }
+  
+  // render feedback log (owner timeline)
+  function renderFeedbackLog() {
+    if (!feedbackLogList) return;
+    if (feedbackLog.length === 0) {
+      feedbackLogList.innerHTML = '<div class="empty-log">No ratings yet. Submit a test rating to see waiter performance.</div>';
+      return;
+    }
+    feedbackLogList.innerHTML = '';
+    feedbackLog.slice(0, 15).forEach(log => {
+      const logDiv = document.createElement('div');
+      logDiv.className = 'log-item';
+      const starFull = '★'.repeat(log.stars) + '☆'.repeat(5 - log.stars);
+      logDiv.innerHTML = `
+        <div><span class="log-waiter">👨‍🍳 ${escapeHtml(log.waiterName)}</span> · ${starFull} (${log.stars}/5)</div>
+        <div style="font-size:0.7rem; margin-top: 4px;">✍️ "${escapeHtml(log.reason.length > 70 ? log.reason.substring(0,70)+'…' : log.reason)}"</div>
+        <div style="font-size:0.65rem; color:#7f8c85; margin-top: 5px;">🕒 ${log.timestamp} · new avg: ${log.avgAfter}⭐</div>
+      `;
+      feedbackLogList.appendChild(logDiv);
+    });
+  }
+  
+  // submit rating action (owner submits simulated customer feedback)
+  function submitRating() {
+    if (!selectedWaiterId) {
+      alert("Please select a waiter first.");
+      return;
+    }
+    const selectedWaiter = waiters.find(w => w.id === selectedWaiterId);
+    if (!selectedWaiter) return;
     
-    // final check: if somehow rating not submitted but modal left open? already enforced.
-    console.log('MGT Entrepreneurship Feedback System — mandatory rating ready');
-  })();
+    if (currentStarInput === 0) {
+      alert("❌ Please select a star rating (1 to 5) before submitting. This is required to evaluate performance.");
+      return;
+    }
+    const reason = reviewReasonText.value.trim();
+    if (reason === "") {
+      // optional but good to encourage reason — but not mandatory for demo? let's allow but with a soft nudge
+      if (confirm("No comment provided. It's recommended to add why for better coaching. Submit anyway?")) {
+        // proceed
+      } else {
+        return;
+      }
+    }
+    // add rating to waiter
+    addRatingToWaiter(selectedWaiterId, currentStarInput, reason || "(no specific reason)");
+    // reset star input and reason
+    currentStarInput = 0;
+    updateStarUI();
+    reviewReasonText.value = '';
+    // small success visual feedback
+    const btn = submitBtn;
+    const originalText = btn.innerText;
+    btn.innerText = "✅ Rating recorded!";
+    setTimeout(() => {
+      btn.innerText = originalText;
+    }, 1500);
+    
+    // If we want to highlight which waiter is excelling or underperforming, we already show badge.
+    // auto-scroll log if needed
+  }
+  
+  // helper to prevent XSS
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+  
+  // initial data seeding: give some demo ratings to show how dashboard works
+  function seedDemoRatings() {
+    // Emily gets some good ratings
+    const emily = waiters.find(w => w.name === "Emily Rodriguez");
+    if (emily) {
+      emily.ratings.push({ stars: 5, reason: "Very attentive and kind", timestamp: "Today 12:30 PM" });
+      emily.ratings.push({ stars: 4, reason: "Fast service, but forgot extra napkins", timestamp: "Yesterday 7:15 PM" });
+      recalcAverage(emily);
+      feedbackLog.unshift({ waiterName: "Emily Rodriguez", stars: 5, reason: "Very attentive and kind", timestamp: "Today 12:30 PM", avgAfter: emily.average.toFixed(1) });
+      feedbackLog.unshift({ waiterName: "Emily Rodriguez", stars: 4, reason: "Fast service, but forgot extra napkins", timestamp: "Yesterday 7:15 PM", avgAfter: "4.5" });
+    }
+    const james = waiters.find(w => w.name === "James Chen");
+    if (james) {
+      james.ratings.push({ stars: 3, reason: "Good but a bit slow", timestamp: "Yesterday 8:00 PM" });
+      recalcAverage(james);
+      feedbackLog.unshift({ waiterName: "James Chen", stars: 3, reason: "Good but a bit slow", timestamp: "Yesterday 8:00 PM", avgAfter: "3.0" });
+    }
+    const sophia = waiters.find(w => w.name === "Sophia Martinez");
+    if (sophia) {
+      sophia.ratings.push({ stars: 5, reason: "Amazing! Made great wine recommendations", timestamp: "2 days ago" });
+      recalcAverage(sophia);
+      feedbackLog.unshift({ waiterName: "Sophia Martinez", stars: 5, reason: "Amazing! Made great wine recommendations", timestamp: "2 days ago", avgAfter: "5.0" });
+    }
+    // Michael no ratings to show "needs review" state
+    renderWaiterList();
+    renderFeedbackLog();
+    updateTotalRatingsCount();
+  }
+  
+  // reset star widget after init
+  function init() {
+    buildStarWidget();
+    renderWaiterList();
+    renderFeedbackLog();
+    // attach event
+    submitBtn.addEventListener('click', submitRating);
+    // select first waiter by default
+    if (waiters.length) selectWaiter(waiters[0].id);
+    seedDemoRatings();   // adds demo data for realistic owner view
+    // force star reset after seed
+    currentStarInput = 0;
+    updateStarUI();
+  }
+  
+  init();
 </script>
 </body>
 </html>
