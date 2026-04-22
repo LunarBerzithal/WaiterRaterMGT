@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Restaurant Owner · Waiter Performance Tracker</title>
+  <title>Restaurant Owner · Waiter Performance Tracker | Beta Pricing</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
     }
 
     body {
@@ -234,26 +234,135 @@
       padding: 1rem;
     }
 
-    /* responsiveness */
+    /* PRICING SECTION - Willingness to pay test */
+    .pricing-card {
+      background: linear-gradient(115deg, #1e2f28 0%, #1a3329 100%);
+      border-radius: 1.8rem;
+      padding: 1.8rem;
+      margin-top: 0.5rem;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+      border: 1px solid rgba(230,180,34,0.4);
+    }
+    .pricing-card h3 {
+      color: #f5e7c8;
+      font-size: 1.4rem;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pricing-sub {
+      color: #cbdad2;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      border-left: 2px solid #e6b422;
+      padding-left: 0.8rem;
+    }
+    .pricing-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .price-option {
+      background: rgba(255,255,240,0.08);
+      border-radius: 1.2rem;
+      padding: 0.9rem 1.4rem;
+      flex: 1;
+      min-width: 150px;
+      cursor: pointer;
+      border: 1.5px solid rgba(230,180,34,0.3);
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .price-option.selected {
+      background: #e6b422;
+      border-color: #ffdd88;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .price-option.selected .price-title,
+    .price-option.selected .price-detail {
+      color: #1e2f28;
+      font-weight: 700;
+    }
+    .price-title {
+      font-weight: 700;
+      color: #ffefcf;
+      font-size: 1rem;
+    }
+    .price-detail {
+      font-size: 0.8rem;
+      color: #c7dfd3;
+      margin-top: 4px;
+    }
+    .offer-highlight {
+      background: #2b5e3b;
+      padding: 0.6rem 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0 1rem;
+      font-size: 0.9rem;
+      color: #ffefcf;
+      text-align: center;
+      font-weight: 500;
+    }
+    .confirm-price-btn {
+      background: #e6b422;
+      border: none;
+      width: 100%;
+      padding: 0.8rem;
+      font-weight: 800;
+      border-radius: 2rem;
+      color: #1e3c2c;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 0.5rem;
+    }
+    .confirm-price-btn:hover {
+      background: #ffcf54;
+      transform: scale(1.01);
+    }
+    .price-feedback-note {
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 1rem;
+      color: #bcd0c4;
+    }
+    .toast-message {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f28;
+      color: #f5e7c8;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast-message.show {
+      opacity: 1;
+    }
     @media (max-width: 800px) {
       .waiter-grid {
         grid-template-columns: 1fr;
       }
-      body {
-        padding: 1rem;
+      .pricing-options {
+        flex-direction: column;
       }
-    }
-    button {
-      cursor: pointer;
-    }
-    .highlight {
-      font-weight: bold;
     }
     footer {
       margin-top: 2rem;
       text-align: center;
       font-size: 0.7rem;
       color: #6c7c72;
+    }
+    button {
+      cursor: pointer;
     }
   </style>
 </head>
@@ -268,45 +377,68 @@
   </div>
 
   <div class="waiter-grid">
-    <!-- LEFT: waiter list & performance overview -->
+    <!-- LEFT: waiter list -->
     <div class="waiters-panel">
       <h2>👥 Waitstaff Roster</h2>
-      <div id="waiterListContainer" class="waiter-list">
-        <!-- dynamic waiter cards injected -->
-      </div>
+      <div id="waiterListContainer" class="waiter-list"></div>
     </div>
 
-    <!-- RIGHT: rating simulator + recent activity log -->
+    <!-- RIGHT: rating simulator + logs + pricing test -->
     <div class="insight-panel">
-      <!-- Rating simulator for restaurant owners (they simulate customer feedback) -->
       <div class="simulate-card">
         <h3>⭐ Record Customer Feedback</h3>
         <div id="selectedWaiterDisplay" class="selected-waiter-info">
           <span>📌 Selected waiter:</span>
           <strong id="selectedWaiterName">— none selected —</strong>
         </div>
-        <div class="star-rating-input" id="dynamicStars">
-          <!-- stars injected -->
-        </div>
-        <textarea id="reviewReason" class="review-input" rows="2" placeholder="Why this rating? (e.g., friendly, slow, attentive, forgot order...)"></textarea>
+        <div class="star-rating-input" id="dynamicStars"></div>
+        <textarea id="reviewReason" class="review-input" rows="2" placeholder="Why this rating? (e.g., friendly, slow, attentive...)"></textarea>
         <button id="submitFeedbackBtn" class="submit-rating-btn">✅ Submit rating & update performance</button>
-        <p style="font-size: 0.7rem; margin-top: 0.6rem; color:#6e7f75;">⭐ ratings 1–5 stars · helps identify who is doing great and who needs coaching</p>
       </div>
 
-      <!-- Recent feedback log -->
       <div class="logs-card">
         <h3>📋 Recent feedback log (owner view)</h3>
-        <div id="feedbackLogList" class="log-list">
-          <div class="empty-log">No ratings yet. Submit a test rating to see waiter performance.</div>
+        <div id="feedbackLogList" class="log-list"><div class="empty-log">No ratings yet. Submit a test rating.</div></div>
+      </div>
+
+      <!-- NEW PRICING SECTION: willingness to pay test (6 months free then $9/mo) -->
+      <div class="pricing-card" id="pricingSection">
+        <h3>💰 Founder's Beta – Willingness to Pay</h3>
+        <div class="pricing-sub">Help us validate pricing: your selection is anonymous but critical for our MVP research.</div>
+        <div class="pricing-options" id="pricingOptions">
+          <div class="price-option" data-price="free">
+            <div class="price-title">🔓 Free only</div>
+            <div class="price-detail">Would not pay</div>
+          </div>
+          <div class="price-option" data-price="6months_free_then_9">
+            <div class="price-title">🎁 6 months free → $9/mo</div>
+            <div class="price-detail">After trial: $9 per month</div>
+          </div>
+          <div class="price-option" data-price="monthly_9_no_trial">
+            <div class="price-title">📆 $9/month (no trial)</div>
+            <div class="price-detail">Pay from start</div>
+          </div>
+          <div class="price-option" data-price="higher">
+            <div class="price-title">💎 $19+ / month</div>
+            <div class="price-detail">Premium tier</div>
+          </div>
         </div>
+        <div class="offer-highlight">
+          ⭐ LIMITED FOUNDER OFFER: <strong>6 months completely free</strong>, then just $9/month for full access.<br>
+          Select your preference below — this helps us decide pricing.
+        </div>
+        <button id="confirmPricingBtn" class="confirm-price-btn">✅ Confirm my pricing preference</button>
+        <div class="price-feedback-note">Your choice helps us build what restaurants truly need. No actual payment taken.</div>
       </div>
     </div>
   </div>
-  <footer>🔍 Each rating directly impacts waiter's average · perfect tool to track service quality & staff performance.</footer>
+  <footer>🔍 Each rating directly impacts waiter's average · Pricing test: 6 months free → $9/mo offer</footer>
 </div>
 
+<div id="toastMsg" class="toast-message"></div>
+
 <script>
-  // ----- Data Model -----
+  // ---------- DATA MODEL ----------
   let waiters = [
     { id: 1, name: "Emily Rodriguez", ratings: [], average: 0 },
     { id: 2, name: "James Chen", ratings: [], average: 0 },
@@ -314,12 +446,12 @@
     { id: 4, name: "Michael Okafor", ratings: [], average: 0 }
   ];
 
-  // feedback log entries (owner timeline)
-  let feedbackLog = []; // each: { waiterName, stars, reason, timestamp }
+  let feedbackLog = []; // each: { waiterName, stars, reason, timestamp, avgAfter }
+  let selectedWaiterId = 1;
+  let currentStarInput = 0;
 
-  // UI state
-  let selectedWaiterId = 1; // default select first waiter
-  let currentStarInput = 0;  // temporary rating value in simulator
+  // pricing selection (willingness to pay)
+  let selectedPriceOption = null; // 'free', '6months_free_then_9', 'monthly_9_no_trial', 'higher'
 
   // DOM elements
   const waiterContainer = document.getElementById('waiterListContainer');
@@ -329,8 +461,18 @@
   const submitBtn = document.getElementById('submitFeedbackBtn');
   const feedbackLogList = document.getElementById('feedbackLogList');
   const totalRatingsBadge = document.getElementById('totalRatingsBadge');
+  const confirmPricingBtn = document.getElementById('confirmPricingBtn');
+  const toastMsgDiv = document.getElementById('toastMsg');
 
-  // Helper: recalculate average for a waiter
+  function showToast(message, duration = 2800) {
+    toastMsgDiv.textContent = message;
+    toastMsgDiv.classList.add('show');
+    setTimeout(() => {
+      toastMsgDiv.classList.remove('show');
+    }, duration);
+  }
+
+  // Helper: recalc average for a waiter
   function recalcAverage(waiter) {
     if (!waiter.ratings.length) {
       waiter.average = 0;
@@ -341,20 +483,17 @@
     return waiter.average;
   }
 
-  // Update all waiters averages & re-render list
   function refreshAllAverages() {
     waiters.forEach(w => recalcAverage(w));
     renderWaiterList();
     updateTotalRatingsCount();
   }
 
-  // update total ratings badge
   function updateTotalRatingsCount() {
     const total = waiters.reduce((acc, w) => acc + w.ratings.length, 0);
     totalRatingsBadge.innerText = `📊 total ratings: ${total}`;
   }
 
-  // add rating to specific waiter
   function addRatingToWaiter(waiterId, stars, reasonText) {
     const waiter = waiters.find(w => w.id === waiterId);
     if (!waiter) return false;
@@ -366,7 +505,6 @@
     waiter.ratings.push(newRating);
     recalcAverage(waiter);
     
-    // push to owner log
     feedbackLog.unshift({
       waiterName: waiter.name,
       stars: stars,
@@ -374,16 +512,14 @@
       timestamp: new Date().toLocaleString(),
       avgAfter: waiter.average.toFixed(1)
     });
-    // keep log reasonable (max 30 entries)
     if (feedbackLog.length > 30) feedbackLog.pop();
     
-    renderWaiterList();        // refresh left panel
-    renderFeedbackLog();       // refresh right log
+    renderWaiterList();
+    renderFeedbackLog();
     updateTotalRatingsCount();
     return true;
   }
 
-  // render waiter cards (left side)
   function renderWaiterList() {
     if (!waiterContainer) return;
     waiterContainer.innerHTML = '';
@@ -391,11 +527,9 @@
       const avgStars = waiter.average;
       const ratingCount = waiter.ratings.length;
       const avgDisplay = avgStars === 0 ? '—' : avgStars.toFixed(1);
-      
       const card = document.createElement('div');
       card.className = `waiter-card ${selectedWaiterId === waiter.id ? 'selected' : ''}`;
       card.setAttribute('data-id', waiter.id);
-      
       card.innerHTML = `
         <div class="waiter-info">
           <div class="waiter-name">${escapeHtml(waiter.name)}</div>
@@ -414,30 +548,19 @@
       });
       waiterContainer.appendChild(card);
     });
-    // update selected name display
     const selected = waiters.find(w => w.id === selectedWaiterId);
-    if (selected) {
-      selectedWaiterNameSpan.innerText = selected.name;
-    } else if (waiters.length) {
-      selectWaiter(waiters[0].id);
-    } else {
-      selectedWaiterNameSpan.innerText = "— none —";
-    }
+    if (selected) selectedWaiterNameSpan.innerText = selected.name;
+    else if (waiters.length) selectWaiter(waiters[0].id);
   }
-  
-  // select waiter helper
+
   function selectWaiter(id) {
     selectedWaiterId = id;
-    const waiterExists = waiters.some(w => w.id === id);
-    if (!waiterExists && waiters.length) selectedWaiterId = waiters[0].id;
-    renderWaiterList();  // re-render to show highlight
-    // reset star input UI
+    renderWaiterList();
     currentStarInput = 0;
     updateStarUI();
     reviewReasonText.value = '';
   }
-  
-  // star rating widget (simulator)
+
   function buildStarWidget() {
     dynamicStarsDiv.innerHTML = '';
     for (let i = 1; i <= 5; i++) {
@@ -453,24 +576,18 @@
     }
     updateStarUI();
   }
-  
   function updateStarUI() {
     const stars = document.querySelectorAll('#dynamicStars .star-btn');
     stars.forEach((star, idx) => {
-      const val = idx + 1;
-      if (val <= currentStarInput) {
-        star.classList.add('active-star');
-      } else {
-        star.classList.remove('active-star');
-      }
+      if (idx + 1 <= currentStarInput) star.classList.add('active-star');
+      else star.classList.remove('active-star');
     });
   }
-  
-  // render feedback log (owner timeline)
+
   function renderFeedbackLog() {
     if (!feedbackLogList) return;
     if (feedbackLog.length === 0) {
-      feedbackLogList.innerHTML = '<div class="empty-log">No ratings yet. Submit a test rating to see waiter performance.</div>';
+      feedbackLogList.innerHTML = '<div class="empty-log">No ratings yet. Submit a test rating.</div>';
       return;
     }
     feedbackLogList.innerHTML = '';
@@ -486,48 +603,120 @@
       feedbackLogList.appendChild(logDiv);
     });
   }
-  
-  // submit rating action (owner submits simulated customer feedback)
+
   function submitRating() {
-    if (!selectedWaiterId) {
-      alert("Please select a waiter first.");
-      return;
-    }
+    if (!selectedWaiterId) return;
     const selectedWaiter = waiters.find(w => w.id === selectedWaiterId);
     if (!selectedWaiter) return;
-    
     if (currentStarInput === 0) {
-      alert("❌ Please select a star rating (1 to 5) before submitting. This is required to evaluate performance.");
+      alert("❌ Please select a star rating (1 to 5).");
       return;
     }
     const reason = reviewReasonText.value.trim();
-    if (reason === "") {
-      // optional but good to encourage reason — but not mandatory for demo? let's allow but with a soft nudge
-      if (confirm("No comment provided. It's recommended to add why for better coaching. Submit anyway?")) {
-        // proceed
-      } else {
-        return;
-      }
-    }
-    // add rating to waiter
     addRatingToWaiter(selectedWaiterId, currentStarInput, reason || "(no specific reason)");
-    // reset star input and reason
     currentStarInput = 0;
     updateStarUI();
     reviewReasonText.value = '';
-    // small success visual feedback
-    const btn = submitBtn;
-    const originalText = btn.innerText;
-    btn.innerText = "✅ Rating recorded!";
-    setTimeout(() => {
-      btn.innerText = originalText;
-    }, 1500);
-    
-    // If we want to highlight which waiter is excelling or underperforming, we already show badge.
-    // auto-scroll log if needed
+    showToast(`⭐ Rated ${currentStarInput === 0 ? '—' : currentStarInput} stars? Rating recorded!`, 1500);
+    // fix star reset after rating: currentStarInput already 0
   }
-  
-  // helper to prevent XSS
+
+  // ----- PRICING WILLINGNESS TO PAY LOGIC (6 months free then $9/mo)-----
+  function highlightSelectedPriceOption() {
+    const optionsDivs = document.querySelectorAll('.price-option');
+    optionsDivs.forEach(opt => {
+      const priceVal = opt.getAttribute('data-price');
+      if (selectedPriceOption === priceVal) {
+        opt.classList.add('selected');
+      } else {
+        opt.classList.remove('selected');
+      }
+    });
+  }
+
+  function attachPriceSelectionEvents() {
+    const options = document.querySelectorAll('.price-option');
+    options.forEach(opt => {
+      opt.removeEventListener('click', priceClickHandler);
+      opt.addEventListener('click', priceClickHandler);
+    });
+  }
+  function priceClickHandler(e) {
+    const targetDiv = e.currentTarget;
+    const priceValue = targetDiv.getAttribute('data-price');
+    selectedPriceOption = priceValue;
+    highlightSelectedPriceOption();
+    // show extra info based on selection
+    if (priceValue === '6months_free_then_9') {
+      showToast("You selected: 6 months free → $9/month — great choice!", 2000);
+    } else if (priceValue === 'free') {
+      showToast("Free only selected — good to know for our freemium model.", 1800);
+    } else if (priceValue === 'monthly_9_no_trial') {
+      showToast("$9/month from start — valuable feedback!", 1800);
+    } else if (priceValue === 'higher') {
+      showToast("$19+ / month — indicates high value perception.", 1800);
+    }
+  }
+
+  function savePricingPreference() {
+    if (!selectedPriceOption) {
+      alert("Please select a pricing preference first (Free, 6 months free then $9/mo, etc.)");
+      return;
+    }
+    // Store in localStorage for session persistence (simulates data collection)
+    const pricingData = {
+      choice: selectedPriceOption,
+      timestamp: new Date().toISOString(),
+      offer: "6 months free then $9/mo (featured)"
+    };
+    localStorage.setItem('waiter_pricing_preference', JSON.stringify(pricingData));
+    // Also keep in memory for potential survey export
+    showToast(`✅ Thank you! Your preference (${selectedPriceOption}) recorded for MVP research.`, 3500);
+    // Optional: show extra confirmation that this helps validate willingness to pay
+    setTimeout(() => {
+      showToast("⭐ Your feedback helps us decide if restaurant owners will pay → critical for our class project.", 4000);
+    }, 2000);
+  }
+
+  function loadStoredPricing() {
+    const stored = localStorage.getItem('waiter_pricing_preference');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.choice) {
+          selectedPriceOption = parsed.choice;
+          highlightSelectedPriceOption();
+        }
+      } catch(e) {}
+    }
+  }
+
+  function seedDemoRatings() {
+    const emily = waiters.find(w => w.name === "Emily Rodriguez");
+    if (emily && emily.ratings.length === 0) {
+      emily.ratings.push({ stars: 5, reason: "Very attentive and kind", timestamp: "Today 12:30 PM" });
+      emily.ratings.push({ stars: 4, reason: "Fast service", timestamp: "Yesterday" });
+      recalcAverage(emily);
+      feedbackLog.unshift({ waiterName: "Emily Rodriguez", stars: 5, reason: "Very attentive and kind", timestamp: "Today 12:30 PM", avgAfter: "4.5" });
+      feedbackLog.unshift({ waiterName: "Emily Rodriguez", stars: 4, reason: "Fast service", timestamp: "Yesterday", avgAfter: "4.5" });
+    }
+    const james = waiters.find(w => w.name === "James Chen");
+    if (james && james.ratings.length === 0) {
+      james.ratings.push({ stars: 3, reason: "Good but a bit slow", timestamp: "Yesterday 8:00 PM" });
+      recalcAverage(james);
+      feedbackLog.unshift({ waiterName: "James Chen", stars: 3, reason: "Good but a bit slow", timestamp: "Yesterday 8:00 PM", avgAfter: "3.0" });
+    }
+    const sophia = waiters.find(w => w.name === "Sophia Martinez");
+    if (sophia && sophia.ratings.length === 0) {
+      sophia.ratings.push({ stars: 5, reason: "Amazing wine recs", timestamp: "2 days ago" });
+      recalcAverage(sophia);
+      feedbackLog.unshift({ waiterName: "Sophia Martinez", stars: 5, reason: "Amazing wine recs", timestamp: "2 days ago", avgAfter: "5.0" });
+    }
+    renderWaiterList();
+    renderFeedbackLog();
+    updateTotalRatingsCount();
+  }
+
   function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -535,55 +724,22 @@
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
       return m;
-    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-      return c;
     });
   }
-  
-  // initial data seeding: give some demo ratings to show how dashboard works
-  function seedDemoRatings() {
-    // Emily gets some good ratings
-    const emily = waiters.find(w => w.name === "Emily Rodriguez");
-    if (emily) {
-      emily.ratings.push({ stars: 5, reason: "Very attentive and kind", timestamp: "Today 12:30 PM" });
-      emily.ratings.push({ stars: 4, reason: "Fast service, but forgot extra napkins", timestamp: "Yesterday 7:15 PM" });
-      recalcAverage(emily);
-      feedbackLog.unshift({ waiterName: "Emily Rodriguez", stars: 5, reason: "Very attentive and kind", timestamp: "Today 12:30 PM", avgAfter: emily.average.toFixed(1) });
-      feedbackLog.unshift({ waiterName: "Emily Rodriguez", stars: 4, reason: "Fast service, but forgot extra napkins", timestamp: "Yesterday 7:15 PM", avgAfter: "4.5" });
-    }
-    const james = waiters.find(w => w.name === "James Chen");
-    if (james) {
-      james.ratings.push({ stars: 3, reason: "Good but a bit slow", timestamp: "Yesterday 8:00 PM" });
-      recalcAverage(james);
-      feedbackLog.unshift({ waiterName: "James Chen", stars: 3, reason: "Good but a bit slow", timestamp: "Yesterday 8:00 PM", avgAfter: "3.0" });
-    }
-    const sophia = waiters.find(w => w.name === "Sophia Martinez");
-    if (sophia) {
-      sophia.ratings.push({ stars: 5, reason: "Amazing! Made great wine recommendations", timestamp: "2 days ago" });
-      recalcAverage(sophia);
-      feedbackLog.unshift({ waiterName: "Sophia Martinez", stars: 5, reason: "Amazing! Made great wine recommendations", timestamp: "2 days ago", avgAfter: "5.0" });
-    }
-    // Michael no ratings to show "needs review" state
-    renderWaiterList();
-    renderFeedbackLog();
-    updateTotalRatingsCount();
-  }
-  
-  // reset star widget after init
+
   function init() {
     buildStarWidget();
     renderWaiterList();
     renderFeedbackLog();
-    // attach event
-    submitBtn.addEventListener('click', submitRating);
-    // select first waiter by default
+    attachPriceSelectionEvents();
+    loadStoredPricing();
     if (waiters.length) selectWaiter(waiters[0].id);
-    seedDemoRatings();   // adds demo data for realistic owner view
-    // force star reset after seed
+    seedDemoRatings();
+    submitBtn.addEventListener('click', submitRating);
+    confirmPricingBtn.addEventListener('click', savePricingPreference);
     currentStarInput = 0;
     updateStarUI();
   }
-  
   init();
 </script>
 </body>
