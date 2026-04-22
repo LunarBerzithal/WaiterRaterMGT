@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Waiter Rating · Must rate after purchase</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* main card container */
+    .app-container {
+      max-width: 680px;
+      width: 100%;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(1px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.02);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    /* header & product section */
+    .product-panel {
+      background: #1e2a3e;
+      color: white;
+      padding: 2rem 2rem 1.8rem;
+      text-align: center;
+    }
+
+    .product-panel h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-panel .sub {
+      opacity: 0.75;
+      font-size: 0.95rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .product-card {
+      background: #0f172ad9;
+      backdrop-filter: blur(4px);
+      border-radius: 2rem;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .product-info {
+      text-align: left;
+    }
+
+    .product-name {
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .product-price {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .buy-btn {
+      background: #facc15;
+      border: none;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 3rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .buy-btn:hover {
+      background: #ffdd44;
+      transform: scale(1.02);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    /* rating modal overlay (unskippable) */
+    .rating-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.2s, opacity 0.2s ease;
+    }
+
+    .rating-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .rating-modal {
+      background: white;
+      max-width: 480px;
+      width: 90%;
+      border-radius: 2rem;
+      padding: 2rem 1.8rem 2rem;
+      text-align: center;
+      box-shadow: 0 40px 70px rgba(0,0,0,0.3);
+      animation: fadeSlideUp 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .rating-modal h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .rating-modal p {
+      color: #334155;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* star rating widget */
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 0.65rem;
+      margin: 1rem 0 1.5rem;
+      direction: ltr;
+    }
+
+    .star {
+      font-size: 3rem;
+      cursor: pointer;
+      transition: transform 0.1s, color 0.1s;
+      color: #cbd5e1;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .star.selected {
+      color: #f5b042;
+      text-shadow: 0 0 3px #ffb347;
+    }
+
+    .star:hover {
+      transform: scale(1.12);
+      color: #facc15;
+    }
+
+    /* reason textarea */
+    .reason-field {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      font-size: 0.95rem;
+      border-radius: 1.5rem;
+      border: 1.5px solid #e2e8f0;
+      background: #fefefe;
+      font-family: inherit;
+      resize: vertical;
+      transition: 0.2s;
+      margin: 0.5rem 0 1.8rem;
+    }
+
+    .reason-field:focus {
+      border-color: #facc15;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(250,204,21,0.2);
+    }
+
+    .submit-rating-btn {
+      background: #0f172a;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.9rem 1.2rem;
+      width: 100%;
+      border: none;
+      border-radius: 2.5rem;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 0.2rem;
+    }
+
+    .submit-rating-btn:hover {
+      background: #1e293b;
+      transform: translateY(-2px);
+    }
+
+    .close-attempt {
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      background: none;
+      border: none;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* success toast / message */
+    .toast-message {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: #1e2a3e;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 60px;
+      font-weight: 500;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 1100;
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
+    }
+
+    .toast-message.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* rating preview area (after rating submitted) */
+    .rating-history {
+      background: #f8fafc;
+      margin: 1rem 1.5rem 1.8rem;
+      border-radius: 1.5rem;
+      padding: 1rem 1.2rem;
+      border-left: 4px solid #facc15;
+    }
+
+    .rating-history h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+
+    .latest-rating {
+      font-size: 0.95rem;
+      color: #0f172a;
+      word-break: break-word;
+    }
+
+    .stars-preview {
+      color: #f5b042;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .empty-state {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    hr {
+      margin: 0 1.5rem;
+      border: 0;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    footer {
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 1rem;
+      color: #64748b;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- product / shop panel -->
+  <div class="product-panel">
+    <h1>🍽️ The Golden Spoon</h1>
+    <div class="sub">exceptional service starts with your voice</div>
+    <div class="product-card">
+      <div class="product-info">
+        <div class="product-name">
+          <span>🥘 Signature Truffle Risotto</span>
+        </div>
+        <div class="product-price">$24.90 · Chef's Special</div>
+      </div>
+      <button class="buy-btn" id="buyButton">✨ Buy Now</button>
+    </div>
+    <div style="margin-top: 12px; font-size: 0.75rem; opacity: 0.7;">⭐ mandatory rating after purchase — cannot skip</div>
+  </div>
+
+  <!-- rating history / latest feedback (demo) -->
+  <div class="rating-history" id="ratingHistoryBlock">
+    <h3>📋 Your most recent rating</h3>
+    <div id="latestRatingDisplay" class="latest-rating empty-state">— no rating yet. complete a purchase to review your waiter —</div>
+  </div>
+  <hr />
+  <footer>every purchase requires rating • genuine feedback helps our team</footer>
+</div>
+
+<!-- MANDATORY RATING MODAL (unskippable) -->
+<div id="ratingModal" class="rating-overlay">
+  <div class="rating-modal">
+    <h2>🍷 Rate your waiter</h2>
+    <p>Your feedback is essential — you cannot proceed without rating.</p>
+    
+    <!-- star rating interactive -->
+    <div class="star-rating" id="starWidget">
+      <!-- 5 stars generated via JS but we can hardcode or dynamic -->
+    </div>
+    
+    <textarea id="reasonText" class="reason-field" rows="3" placeholder="Why this rating? e.g., 'attentive, friendly, fast service' or 'needs improvement...' (optional but recommended)"></textarea>
+    
+    <button id="submitRatingBtn" class="submit-rating-btn">✅ Submit rating & continue</button>
+    <div class="close-attempt">⛔ rating required — no close button, no escape</div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-message">✨ Thanks for your review!</div>
+
+<script>
+  (function() {
+    // ---------- STATE ----------
+    let currentStars = 0;           // 0 = no star selected
+    let purchaseMade = false;       // track if product bought -> unlocks modal requirement
+    let modalActive = false;        // modal visibility state
+    let ratingSubmitted = false;     // once rating given, we don't show modal again until next purchase
+
+    // For demo persistence (in-memory per session, but feels realistic)
+    let latestRating = {
+      stars: null,
+      reason: null,
+      timestamp: null
+    };
+
+    // DOM elements
+    const buyButton = document.getElementById('buyButton');
+    const modalOverlay = document.getElementById('ratingModal');
+    const starContainer = document.getElementById('starWidget');
+    const reasonTextarea = document.getElementById('reasonText');
+    const submitBtn = document.getElementById('submitRatingBtn');
+    const latestRatingDisplay = document.getElementById('latestRatingDisplay');
+    const toastMsg = document.getElementById('toastMsg');
+
+    // Helper: show toast message
+    function showToast(message, duration = 2500) {
+      toastMsg.textContent = message;
+      toastMsg.classList.add('show');
+      setTimeout(() => {
+        toastMsg.classList.remove('show');
+      }, duration);
+    }
+
+    // update the rating preview in the side panel
+    function updateRatingPreview() {
+      if (latestRating.stars !== null && latestRating.stars > 0) {
+        const starCount = latestRating.stars;
+        const starString = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+        const reasonSnippet = latestRating.reason ? ` — "${latestRating.reason.substring(0, 70)}${latestRating.reason.length > 70 ? '…' : ''}"` : '';
+        latestRatingDisplay.innerHTML = `<span class="stars-preview">${starString}</span> (${starCount}/5)${reasonSnippet}<br><span style="font-size:0.7rem; color:#475569;">rated at ${new Date(latestRating.timestamp).toLocaleTimeString()}</span>`;
+        latestRatingDisplay.classList.remove('empty-state');
+      } else {
+        latestRatingDisplay.innerHTML = '— no rating yet. complete a purchase to review your waiter —';
+        latestRatingDisplay.classList.add('empty-state');
+      }
+    }
+
+    // render star rating widget and attach events
+    function buildStarWidget(initialStars = 0) {
+      starContainer.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const starBtn = document.createElement('button');
+        starBtn.setAttribute('data-value', i);
+        starBtn.classList.add('star');
+        starBtn.innerHTML = '★';
+        if (i <= initialStars) {
+          starBtn.classList.add('selected');
+        } else {
+          starBtn.classList.remove('selected');
+        }
+        starBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const value = parseInt(starBtn.getAttribute('data-value'), 10);
+          setStars(value);
+        });
+        starContainer.appendChild(starBtn);
+      }
+    }
+
+    function setStars(value) {
+      currentStars = value;
+      const allStars = document.querySelectorAll('#starWidget .star');
+      allStars.forEach((star, idx) => {
+        const starVal = idx + 1;
+        if (starVal <= currentStars) {
+          star.classList.add('selected');
+        } else {
+          star.classList.remove('selected');
+        }
+      });
+    }
+
+    // reset modal fields (but keep star selection default zero)
+    function resetModalFields() {
+      currentStars = 0;
+      setStars(0);
+      reasonTextarea.value = '';
+    }
+
+    // open modal and block everything (unskippable)
+    function openRatingModal() {
+      if (modalActive) return;
+      // reset fields for fresh rating
+      resetModalFields();
+      modalOverlay.classList.add('active');
+      modalActive = true;
+      purchaseMade = true;
+      // prevent background scroll
+      document.body.style.overflow = 'hidden';
+      // Additional "unskippable" : disable escape key & click on backdrop won't close
+    }
+
+    // close modal after successful rating submission
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      modalActive = false;
+      document.body.style.overflow = '';
+    }
+
+    // handle rating submission (validation mandatory)
+    function submitRating() {
+      // MANDATORY: at least 1 star
+      if (currentStars === 0) {
+        showToast('❌ Please select a star rating (1 to 5 stars) — you cannot skip this step.', 2800);
+        // visual shake effect to highlight
+        const starArea = document.querySelector('.star-rating');
+        starArea.style.transform = 'shake 0.3s ease';
+        starArea.style.animation = 'shake 0.3s ease';
+        setTimeout(() => { starArea.style.animation = ''; }, 400);
+        return;
+      }
+      
+      const reason = reasonTextarea.value.trim();
+      // reason can be empty string, but it's allowed. however we store it.
+      const finalReason = reason === '' ? '(no comment provided)' : reason;
+      
+      // save rating to memory
+      latestRating = {
+        stars: currentStars,
+        reason: finalReason,
+        timestamp: Date.now()
+      };
+      updateRatingPreview();
+      
+      // show success toast
+      showToast(`⭐ Rated ${currentStars} stars — thank you for your feedback!`, 3000);
+      
+      // close modal and mark rating as submitted for this purchase
+      closeModal();
+      ratingSubmitted = true;
+      purchaseMade = false;    // reset purchase flag (so further purchases will trigger again)
+      
+      // additional user feedback to show that rating is stored
+      // optional console log, but no need.
+    }
+    
+    // BUY action: simulates purchase, then triggers mandatory rating modal
+    function handleBuy() {
+      // If there is already an active modal, don't stack
+      if (modalActive) {
+        showToast('Please complete current rating first.', 1500);
+        return;
+      }
+      
+      // Simulate purchase action: show quick "purchased" effect
+      const buyBtn = document.getElementById('buyButton');
+      const originalText = buyBtn.innerHTML;
+      buyBtn.innerHTML = '✅ Added!';
+      setTimeout(() => {
+        buyBtn.innerHTML = originalText;
+      }, 800);
+      
+      // Show purchase success then open unskippable rating modal
+      showToast('Purchase successful! Now please rate your waiter.', 2000);
+      
+      // slight delay to let toast feel natural, but open modal quickly
+      setTimeout(() => {
+        // prevent opening if already open
+        if (!modalActive) {
+          openRatingModal();
+        }
+      }, 200);
+    }
+    
+    // ----- UNSKIPPABLE FEATURES: disable ESC key and backdrop click -----
+    function blockEscapeAndBackdrop() {
+      // ESC key should NOT close modal when active
+      window.addEventListener('keydown', (e) => {
+        if (modalActive && (e.key === 'Escape' || e.key === 'Esc')) {
+          e.preventDefault();
+          e.stopPropagation();
+          showToast('⚠️ Rating is required — please complete the stars & submit.', 1800);
+          return false;
+        }
+      });
+      
+      // click on overlay background (modal backdrop) should also NOT close
+      modalOverlay.addEventListener('click', (e) => {
+        if (modalActive && e.target === modalOverlay) {
+          e.preventDefault();
+          showToast('🔒 You must rate the waiter before continuing.', 1700);
+          return;
+        }
+      });
+      
+      // any attempt to click outside? modal overlay click above handled.
+      // also disable tabbing out? not needed but fine.
+    }
+    
+    // optional additional: ensure that if user tries to close via browser back or refresh? not necessary but we warn
+    window.addEventListener('beforeunload', (e) => {
+      if (modalActive) {
+        const confirmationMessage = 'You have an unfinished rating. Please complete the rating before leaving.';
+        e.preventDefault();
+        e.returnValue = confirmationMessage;
+        return confirmationMessage;
+      }
+    });
+    
+    // reinitialize star widget after modal opens? we already build it once globally and reset
+    // Build initial widget
+    buildStarWidget(0);
+    
+    // attach buy event
+    buyButton.addEventListener('click', handleBuy);
+    submitBtn.addEventListener('click', submitRating);
+    
+    // block unskippable behaviors
+    blockEscapeAndBackdrop();
+    
+    // Additional: if modal open and user tries to click submit with 0 stars -> prevented by validation.
+    // also we handle reason field optional, but no skip.
+    // to guarantee that after purchase modal cannot be bypassed: we never add close button.
+    // Also remove any native 'X' close icon.
+    
+    // Ensure modal is hidden initially
+    modalOverlay.classList.remove('active');
+    modalActive = false;
+    document.body.style.overflow = '';
+    
+    // Edge case: If user tries to purchase again while modal not active -> works
+    // after rating submitted, purchaseMade flag resets. But latestRating can be shown.
+    // All good.
+    
+    // small improvement: pressing enter on textarea does not submit by accident (only button)
+    reasonTextarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        e.preventDefault();
+        submitRating();
+      }
+    });
+    
+    // also we could show a fallback if multiple purchases: each purchase re-opens modal mandatory.
+    // Perfect!
+    
+    // initial preview load (empty)
+    updateRatingPreview();
+    
+    // Additional extra: Because we are in a GitHub website context, no backend needed.
+    // Simulate that after rating, we store it locally (in-memory). On page refresh the rating will be lost? That's fine.
+    // But user experience: if they refresh the page after rating, the purchase + rating flow resets. That's normal.
+    // For better demo, we can store in localStorage optionally but not required.
+    // OPTIONAL: Persist rating across refresh to make it more real? Let's add optional localStorage.
+    function loadPersistedRating() {
+      const stored = localStorage.getItem('waiter_last_rating');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.stars) {
+            latestRating = parsed;
+            updateRatingPreview();
+          }
+        } catch(e) {}
+      }
+    }
+    function persistRating() {
+      if (latestRating.stars) {
+        localStorage.setItem('waiter_last_rating', JSON.stringify(latestRating));
+      }
+    }
+    // override submitRating to persist
+    const originalSubmit = submitRating;
+    // we replace but keep original logic, then add persistence.
+    window.submitRating = submitRating; // no, just override safely
+    const newSubmit = function() {
+      // call the logic that updates latestRating (we will call the same core)
+      // but to avoid double wrapping, we'll override the global function but careful
+      if (currentStars === 0) {
+        showToast('❌ Please select a star rating (1 to 5 stars) — you cannot skip this step.', 2800);
+        return;
+      }
+      const reason = reasonTextarea.value.trim();
+      const finalReason = reason === '' ? '(no comment provided)' : reason;
+      latestRating = {
+        stars: currentStars,
+        reason: finalReason,
+        timestamp: Date.now()
+      };
+      updateRatingPreview();
+      persistRating(); // save to localStorage
+      showToast(`⭐ Rated ${currentStars} stars — thank you for your feedback!`, 3000);
+      closeModal();
+      ratingSubmitted = true;
+      purchaseMade = false;
+    };
+    // replace submit handler
+    submitBtn.onclick = (e) => {
+      e.preventDefault();
+      if (currentStars === 0) {
+        showToast('❌ Please select a star rating (1 to 5 stars) — you cannot skip this step.', 2800);
+        const starArea = document.querySelector('.star-rating');
+        starArea.style.transform = 'shake 0.3s ease';
+        starArea.style.animation = 'shake 0.3s ease';
+        setTimeout(() => { starArea.style.animation = ''; }, 400);
+        return;
+      }
+      const reason = reasonTextarea.value.trim();
+      const finalReason = reason === '' ? '(no comment provided)' : reason;
+      latestRating = {
+        stars: currentStars,
+        reason: finalReason,
+        timestamp: Date.now()
+      };
+      updateRatingPreview();
+      persistRating();
+      showToast(`⭐ Rated ${currentStars} stars — thank you for your feedback!`, 3000);
+      closeModal();
+      ratingSubmitted = true;
+      purchaseMade = false;
+    };
+    
+    // Load persisted rating from localStorage
+    loadPersistedRating();
+    
+    // define shake animation if not present
+    if (!document.querySelector('#shakeStyle')) {
+      const style = document.createElement('style');
+      style.id = 'shakeStyle';
+      style.textContent = `
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+          100% { transform: translateX(0); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  })();
+</script>
+</body>
+</html>
